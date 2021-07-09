@@ -1,0 +1,80 @@
+asymmetric_obs: False
+params:
+  seed: 7
+
+  algo:
+    name: a2c_continuous
+
+  model:
+    name: continuous_a2c_logstd
+
+  network:
+    name: actor_critic
+    separate: True
+
+    space:
+      continuous:
+        mu_activation: None
+        sigma_activation: None
+        mu_init:
+          name: variance_scaling_initializer
+          scale: 0.02
+        sigma_init:
+          name: const_initializer
+          val: 0
+        fixed_sigma: True
+
+    mlp:
+      units: [400, 200, 100]
+      activation: elu
+      d2rl: False
+
+      initializer:
+        name: variance_scaling_initializer
+        scale: 2
+      regularizer:
+        name:  'None'
+        #scale: 0.001
+
+    rnn:
+      name: lstm
+      units: 128
+      layers: 1
+      before_mlp: False
+      concat_input: True
+      layer_norm: True
+
+  load_checkpoint: False
+  load_path: nn/weights.pth
+
+  config:
+    name : 'trifinger'
+    env_name : rlgpu
+    ppo : True
+    normalize_input : False
+    reward_shaper:
+      scale_value: 0.01
+    normalize_advantage : True
+    gamma : 0.99
+    tau : 0.95
+    learning_rate : 3e-4
+    lr_schedule : adaptive
+    lr_threshold : 0.008
+    score_to_win : 1000000
+    max_epochs: 100000
+    save_best_after : 500
+    save_frequency : 200
+    preemption_checkpoint_freq: 500
+    print_stats : True
+    grad_norm : 1.0
+    entropy_coef : 0.0
+    truncate_grads : True
+    e_clip : 0.2
+    steps_num : 8
+    # NB. over-written by rlg_config_utils by number of instances from args for conveneince
+    minibatch_size : 256
+    mini_epochs : 8
+    critic_coef : 4
+    clip_value : True
+    seq_len : 1
+    bounds_loss_coef: 0.0001

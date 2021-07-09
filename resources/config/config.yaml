@@ -1,0 +1,22 @@
+conda: rlgpu
+max_running: 50
+max_pending: 10
+wait: false
+extra: ~
+next_day: ~
+slurm:
+  gres: "gpu:1"
+  partition: "rtx6000,p100"
+  cpus_per_task: 4
+  gpus: 1
+  nodes: 1
+  time: "24:00:00"
+  mem: "32GB"
+  job_name: "trifinger"
+  qos: "normal"
+  exclude: "gpu180"
+#  nodelist: "gpu[002-036],gpu[121-180]"
+defaults:
+  # defined in the config
+  - gym: trifinger_difficulty_1
+  - rlg: vanilla_ppo
