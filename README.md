@@ -1,26 +1,27 @@
 # Leibniz Gym
 
-
-This repository provides IsaacGym environment for the tri-finger robot. However, 
+This repository provides IsaacGym environment for the tri-finger robot. However,
 the development work can be used to base other RL environments in IsaacGym as well.
 
-The project currently uses [RL-Games](https://github.com/Denys88/rl_games) for training agents. 
+The project currently uses [RL-Games](https://github.com/Denys88/rl_games) for training agents.
 More support will follow based on demand.
+
+For list of contributors, check: [CONTRIBUTORS](CONTRIBUTORS). This code is released under [LICENSE](LICENSE).
 
 # Installation
 
-Details regarding installtion of IsaacGym can be found [here](isaacgym/docs/install.html). 
-For convinience these are summarized below as well. We currently support the `Preview Release 2` version of IsaacGym.
+Details regarding installation of IsaacGym can be found [here](isaacgym/docs/install.html).
+For convenience these are summarized below as well. We currently support the `Preview Release 2` version of IsaacGym.
 
 ### Prerequisites
 
 The code has been tested on Ubuntu 20.04 with Python 3.7. The minimum recommended NVIDIA driver
 version for Linux is `460.32` (dictated by support of IsaacGym).
 
-It uses [Anaconda](https://www.anaconda.com/) to create virtual environments. 
+It uses [Anaconda](https://www.anaconda.com/) to create virtual environments.
 To install Anaconda, follow instructions [here](https://docs.anaconda.com/anaconda/install/linux/).
 
-### Install IsaacGym in a new conda environment 
+### Install IsaacGym in a new conda environment
 
 Run the IsaacGym installation script (`bash create_conda_env_rlgpu.sh`, provided in the downloaded IsaacGym zip):
 
@@ -66,7 +67,7 @@ We use Hydra to keep configuration of runs simple. You can view the main argumen
 * `lebiniz/reward_terms` sets which set of reward terms to use (environment specific). Currently we have two groups for Trifinger: `keypoints` and `posquat`.
 * `leibniz.task_difficulty` (`trifinger`-only) set to 1, 2, 3, or 4, which correspond to training on each of the four difficulty levels from the Real Robot Challenge - see [description here](https://people.tuebingen.mpg.de/felixwidmaier/realrobotchallenge/simulation_phase/tasks.html#difficulty-levels).
 * `leibniz.cube_obs_keypoints` - boolean flag, defaults to `True`. When set, pose is represented by keypoints in network inputs, otherwise it is represented by concatenated position and quaternion.
-* `wandb` - see `config.yaml` for details, but set `wandb.activate=True` to enable WandB logging. 
+* `wandb` - see `config.yaml` for details, but set `wandb.activate=True` to enable WandB logging.
 
 (Arguments using the `/` syntax are selecting one option from a config group, whereas those wtih a `.` are setting the value of an individual argument.)
 
@@ -87,7 +88,10 @@ Usually you'll only want a few environments (say, 256) to get smooth rendering p
 
 The following is one result of training on a V-100GPU for ~24 hours to about 4B timesteps across 16384 environments:
 
-![trifinger_rlg_4](images/training_curve)
+
+| Learning curve | Simulation |
+| :------: | :---: |
+| ![learning](images/trifinger_vanilla_train.png) | ![sim](images/trifinger_vanilla_4.gif) |
 
 ## Citing
 
