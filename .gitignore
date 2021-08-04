@@ -1,16 +1,12 @@
-leibnizgym/output/
-leibnizgym/outputs/
-isaacgym/assets/urdf/robot_properties_fingers/log.txt
-isaacgym/python/rlgpu/logs/
-isaacgym/python/rlgpu/nn/
-isaacgym/python/rlgpu/runs/
-leibnizgym/logs/
-leibnizgym/nn/
-leibnizgym/runs/
-leibnizgym/multirun
-leibnizgym/scripts/outputs
+**/output/
+**/logs/
+**/nn/
+**/runs/
+**/multirun
+
 
 .idea/
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -152,4 +148,3 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
-
