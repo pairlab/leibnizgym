@@ -1,8 +1,8 @@
 # Leibniz Gym
 
-![Python]([https://img.shields.io/badge/python-3.7-blue.svg](https://www.python.org/downloads/release/python-370/))
-![Ubuntu 18.04]([https://img.shields.io/badge/ubuntu-18.04-orange.svg](https://releases.ubuntu.com/18.04/))
-![Ubuntu 20.04]([https://img.shields.io/badge/ubuntu-20.04-orange.svg](https://releases.ubuntu.com/20.04/))
+![Python](https://img.shields.io/badge/python-3.7-blue.svg)
+![Ubuntu 18.04](https://img.shields.io/badge/ubuntu-18.04-orange.svg)
+![Ubuntu 20.04](https://img.shields.io/badge/ubuntu-20.04-orange.svg)
 
 This repository provides IsaacGym environment for the [TriFinger robot](https://sites.google.com/view/trifinger/home-page). However,
 the development work can be used to base other RL environments in IsaacGym as well.
