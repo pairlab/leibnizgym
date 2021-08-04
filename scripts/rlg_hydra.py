@@ -4,11 +4,9 @@ import logging
 from omegaconf import DictConfig, OmegaConf, open_dict
 from dataclasses import dataclass, field
 from omegaconf import MISSING
-from enum import Enum
-from typing import Dict, List, Any, Union, Optional
+from typing import Dict, List, Any
 from hydra.core.config_store import ConfigStore
-from scripts.rlg_train import run_rlg_hydra
-from hydra import utils, slurm_utils
+from leibnizgym.utils.rlg_train import run_rlg_hydra
 try:
     import wandb
 except ImportError:
@@ -136,82 +134,6 @@ class TrifingerDifficulty3(Trifinger):
 
 @dataclass
 class TrifingerDifficulty4(Trifinger):
-    task_difficulty = 4
-    reward_terms:Dict[str, Any] = field(default_factory=lambda: {
-        "finger_move_penalty":{
-            "activate": True,
-            "weight": -0.1,
-        },
-        "finger_reach_object_rate": {
-            "activate": True,
-            "norm_p": 2,
-            "weight": -750,
-        },
-        "object_dist": {
-            "activate": True,
-            "weight": 2000,
-        },
-        "object_rot": { # rot must be enabled for difficulty 4!
-            "activate": True,
-            "weight": 300
-        },
-        "object_rot_delta": {
-            "activate": False,
-            "weight": -250
-        },
-        "object_move": {
-            "activate":False,
-            "weight": -750,
-        }
-    })
-
-@dataclass
-class TrifingerRotationTest(Trifinger):
-    """Mode for testing to try to get the rotation reward up and running."""
-    task_difficulty = 5
-    episode_length = 75
-    reward_terms:Dict[str, Any] = field(default_factory=lambda: {
-        "finger_move_penalty":{
-            "activate": False,
-            "weight": -0.1,
-        },
-        "finger_reach_object_rate": {
-            "activate": True,
-            "norm_p": 2,
-            "weight": -250,
-        },
-        "object_dist": {
-            "activate": False,
-            "weight": 2000,
-        },
-        "object_rot": {
-            "activate": True,
-            "weight": 2000,
-            "epsilon": 0.01,
-            "scale": 3.0,
-        },
-        "object_rot_delta": {
-            "activate": False,
-            "weight": -250
-        },
-        "object_move": {
-            "activate": False,
-            "weight": -750,
-        }
-    })
-    termination_conditions: Dict[str, Any] = field(default_factory=lambda: {
-        "success": {
-            "activate": False,
-            "bonus": 5000.0,
-            "orientation_tolerance": 0.1,
-            "position_tolerance": 0.01,
-        }
-    })
-
-
-
-@dataclass
-class TrifingerRotationCurriculum(Trifinger):
     """Mode for testing to try to get the rotation reward up and running."""
     task_difficulty = 4
     episode_length = 750
@@ -315,25 +237,15 @@ class Config:
     """Base config class."""
     gym: EnvConfig = MISSING
     rlg: Dict[str, Any] = MISSING
-    # these config items populate those down the tree.
-    # TODO is to figure out a better solution using eg specializing configuration in hydra
     args: Args = Args()
 
-    conda: str = MISSING
-    max_running: int = MISSING
-    max_pending: int = MISSING
-    wait: bool = MISSING
-    extra: Optional[str] = MISSING
-    next_day: Optional[str] = MISSING
-    slurm: Dict[str, Any] = MISSING
+    output_root: str = MISSING
 
 @dataclass
 class ConfigSlurm:
     """Base config class."""
     gym: EnvConfig = MISSING
     rlg: Dict[str, Any] = MISSING
-    # these config items populate those down the tree.
-    # TODO is to figure out a better solution using eg specializing configuration in hydra
     args: Args = Args()
 
 def update_cfg(cfg):
@@ -380,8 +292,6 @@ def get_config_store():
     cs.store(group="gym", name="trifinger_difficulty_2", node=TrifingerDifficulty2)
     cs.store(group="gym", name="trifinger_difficulty_3", node=TrifingerDifficulty3)
     cs.store(group="gym", name="trifinger_difficulty_4", node=TrifingerDifficulty4)
-    cs.store(group="gym", name="trifinger_rotation_test", node=TrifingerRotationTest)
-    cs.store(group="gym", name="trifinger_rotation_curriculum", node=TrifingerRotationCurriculum)
 
     # Don't need to instantiate the RLG configs as they are still yaml's - see corresponding directory.
     cs.store(name="config", node=Config)
@@ -389,24 +299,6 @@ def get_config_store():
 @hydra.main(config_name="config", config_path="../resources/config")
 def launch_rlg_hydra(cfg: DictConfig):
     log = logging.getLogger(__name__)
-
-    if 'SLURM_JOB_ID' in os.environ:
-        # cfg.slurm.job_name = os.environ['SLURM_JOB_ID']
-
-        slurm_utils.symlink_hydra(cfg, os.getcwd())
-
-        j_dir = slurm_utils.get_j_dir(cfg)
-        checkpoint_dir = os.path.join(j_dir, os.environ['SLURM_JOB_ID'])
-        checkpoint = os.path.join(checkpoint_dir, f'{cfg.rlg.params.config.name}.pth')
-        if os.path.exists(checkpoint):
-            log.info(f'Preemption checkpoint detected at {checkpoint}... will restore')
-            cfg.rlg.params.load_checkpoint = True
-            cfg.rlg.params.load_path = checkpoint
-        else:
-            log.info(f'No checkpoint detected at {checkpoint}')
-        cfg.rlg.params.config.preemption_checkpoint_dir = checkpoint_dir
-    else:
-        log.warning("Warning - not detected being run as SLURM, assuming we are running locally.")
 
     if cfg.args.wandb_log:
         wandb.init(

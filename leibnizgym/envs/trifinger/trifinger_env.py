@@ -112,23 +112,6 @@ TRIFINGER_DEFAULT_CONFIG_DICT = {
             "orientation_tolerance": 0.2,  # rad
         }
     },
-    "pydr": {
-        "activate": False,
-        "properties": {
-            "actions": {
-                "noise_operator": "additive",
-                "distribution": { "type": "gaussian", "stdev": [0.05] * 9, },
-                "distribution_correlated": {"type": "gaussian", "stdev": [0.01] * 9, },
-                "schedule": {"type": "linear", "sched_start": 5e7, "sched_end": 1e8}
-            },
-            "observations": {
-                "noise_operator": "additive",
-                "distribution": {"type": "gaussian", "stdev": [0.05] * 41, },
-                "distribution_correlated": {"type": "gaussian", "stdev": [0.01] * 41, },
-                "schedule": {"type": "linear", "sched_start": 5e7, "sched_end": 1e8}
-            },
-        }
-    }
 }
 
 
@@ -472,11 +455,6 @@ class TrifingerEnv(IsaacEnvBase):
             )
         else:
             action_transformed = self._action_buf
-
-        # @todo - possibly change to not have to have the if statement and just not transform
-        # @todo - the action. the reason to not do this would be it could make control flow confusing
-        if "actions" in self._pydr_properties:
-            action_transformed = self._pydr_properties["actions"](action_transformed, step=self.env_steps_count)
 
         # compute command on the basis of mode selected
         if self.config["command_mode"] == 'torque':
@@ -1039,11 +1017,6 @@ class TrifingerEnv(IsaacEnvBase):
         start_offset = end_offset
         end_offset = start_offset + self.get_action_dim()
         self._obs_buf[:, start_offset:end_offset] = self._action_buf
-
-        # @todo - possibly change to not have to have the if statement and just not transform
-        # @todo - the action. the reason to not do this would be it could make control flow confusing
-        if "observations" in self._pydr_properties:
-            self._obs_buf = self._pydr_properties["observations"](self._obs_buf, step=self.env_steps_count)
 
     def __fill_states(self):
         """

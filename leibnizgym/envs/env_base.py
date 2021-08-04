@@ -26,11 +26,6 @@ import random
 import torch
 import yaml
 
-try:
-    from pyDR import PyDR
-except ImportError:
-    print(f'WARNING - pyDR not installed. Domain Randomization functionality will not be available.')
-
 # default configuration dictionory for simulator
 ISAACGYM_DEFAULT_CONFIG_DICT = {
     # Seed of the experiment
@@ -77,12 +72,6 @@ ISAACGYM_DEFAULT_CONFIG_DICT = {
             "shape_collision_margin": 0.01,
             "num_outer_iterations": 4,
             "num_inner_iterations": 10
-        }
-    },
-    "pydr": {
-        "activate": False,  # no DR by default
-        "properties": {
-            # Properties go here. see pyDR docs for details.
         }
     },
 }
@@ -178,8 +167,6 @@ class IsaacEnvBase:
         self.__setup()
         # set seed of the environment
         self.seed(self.config["seed"])
-        # setup domain randomisation
-        self._configure_pydr()
 
     """
     Configurations
@@ -623,13 +610,5 @@ class IsaacEnvBase:
             self._gym.subscribe_viewer_keyboard_event(self._viewer, gymapi.KEY_V, "toggle_viewer_sync")
             # set camera pose
             self.set_camera_lookat(pos=(1.0, 1.0, 1.0), target=(0.0, 0.0, 0.0))
-
-    def _configure_pydr(self):
-        """Configures the pyDR properties, used to implement domain randomisation. """
-        if self.config.get("pydr", {}) and self.config["pydr"].get("activate", False):
-            self._pydr = PyDR(self.num_instances, "torch", torch.device(self.device))
-            self._pydr_properties = self._pydr.properties_from_dicts(self.config["pydr"]["properties"])
-        else:
-            self._pydr_properties = {}
 
 # EOF

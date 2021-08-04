@@ -251,12 +251,4 @@ def run_rlg():
     runner.reset()
     runner.run(vargs)
 
-if __name__ == '__main__':
-    # get CLI arguments
-    cli_args = get_args(use_rlg_config=True)
-    # parse arguments to load configurations
-    task_cfg, agent_cfg_train, logdir = load_cfg(cli_args)
-    vargs = vars(args)
-    run_rlg()
-
 # EOF

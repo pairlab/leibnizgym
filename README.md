@@ -56,20 +56,15 @@ pip install -e .
 
 To train with RL Games:
 ```bash
-python scripts/train_rlgames.py num_envs=<INT>
+python scripts/rlg_hydra.py args.num_envs=<INT> args.headless=True
 ```
 
-Where num_envs is an integer. For a recent 8G NVIDIA GPU you should go with `8192` envs, or for 16G `16382`.
+Where args.num_envs is an integer. For a recent 8G NVIDIA GPU you should go with `8192` envs, or for 16G `16382`.
+`args.headless` tells it to stop rendering.
 
 We use Hydra to keep configuration of runs simple. You can view the main arguments to the scripts by looking in `resources/config/config.yaml` which contains more information. You set them by doing `config_variable=value`. The main ones to be aware of are:
 
-* `leibniz` sets which environment to use. Currently the only one and the default is `trifinger`, other environments will be listed in the `resources/config/leibniz` directory as they are created.
-* `lebiniz/reward_terms` sets which set of reward terms to use (environment specific). Currently we have two groups for Trifinger: `keypoints` and `posquat`.
-* `leibniz.task_difficulty` (`trifinger`-only) set to 1, 2, 3, or 4, which correspond to training on each of the four difficulty levels from the Real Robot Challenge - see [description here](https://people.tuebingen.mpg.de/felixwidmaier/realrobotchallenge/simulation_phase/tasks.html#difficulty-levels).
-* `leibniz.cube_obs_keypoints` - boolean flag, defaults to `True`. When set, pose is represented by keypoints in network inputs, otherwise it is represented by concatenated position and quaternion.
-* `wandb` - see `config.yaml` for details, but set `wandb.activate=True` to enable WandB logging.
-
-(Arguments using the `/` syntax are selecting one option from a config group, whereas those wtih a `.` are setting the value of an individual argument.)
+* `gym` sets which environment to use. The current options are the different difficulty levels of trifinger, `trifinger_difficulty_{1,2,3,4}`
 
 ## Inference & Loading Checkpoints
 
@@ -79,19 +74,12 @@ To run inference and see the results, you want to go:
 
 
 ```bash
-python scripts/train_rlgames.py num_envs=<INT> play=True checkpoint=/path/to/checkpoint.pth
+python scripts/rlg_hydra.py args.num_envs=<INT> args.play=True args.checkpoint=/path/to/checkpoint.pth args.headless=False
 ```
 
 Where `play` tells it not to train and `checkpoint` is the path to load the checkpoint. If you want to start training from a trained checkpoint, then just don't specify `play` (or set it to `False`).
 Usually you'll only want a few environments (say, 256) to get smooth rendering performance during inference.
 
-
-The following is one result of training on a V-100GPU for ~24 hours to about 4B timesteps across 16384 environments:
-
-
-| Learning curve | Simulation |
-| :------: | :---: |
-| ![learning](images/trifinger_vanilla_train.png) | ![sim](images/trifinger_vanilla_4.gif) |
 
 ## Citing
 

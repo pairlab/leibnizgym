@@ -24,7 +24,6 @@ INSTALL_REQUIRES = [
     "torch",
     "hydra-core>=1.1",
     "wandb",
-    'pyDR @ git+https://github.com/pairlab/pyDR@legacy',
     'rl_games @ git+https://github.com/Denys88/rl_games'
 ]
 
