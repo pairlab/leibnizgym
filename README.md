@@ -100,5 +100,10 @@ If you want to start training from a trained checkpoint, then just don't specify
 ## Citing
 
 ```
-***TODO*** BibTeX when arXived.
+@article{allshire2021transferring,
+  title={Transferring Dexterous Manipulation from GPU Simulation to a Remote Real-World TriFinger},
+  author={Allshire, Arthur and Mittal, Mayank and Lodaya, Varun and Makoviychuk, Viktor and Makoviichuk, Denys and Widmaier, Felix and W{\"u}thrich, Manuel and Bauer, Stefan and Handa, Ankur and Garg, Animesh},
+  journal={arXiv preprint arXiv:2108.09779},
+  year={2021}
+}
 ```
